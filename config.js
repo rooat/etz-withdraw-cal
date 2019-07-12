@@ -24,17 +24,31 @@ const lpushAsync = promisify(client.lpush).bind(client);
 const rpopAsync = promisify(client.rpop).bind(client);
 const delAsync = promisify(client.del).bind(client);
 
+// const config = {
+//     database: 'eth_with_db',
+//     username: 'root',
+//     password: 'HWLhwl@#896',
+//     host: 'localhost',
+//     port: 3306
+// };
+// const config_mysql = {
+//     database: 'eth_with_db',
+//     user: 'root',
+//     password: 'HWLhwl@#896',
+//     host: 'localhost',
+//     port: 3306
+// };
 const config = {
     database: 'eth_with_db',
     username: 'root',
-    password: 'HWLhwl@#896',
+    password: 'root',
     host: 'localhost',
     port: 3306
 };
 const config_mysql = {
     database: 'eth_with_db',
     user: 'root',
-    password: 'HWLhwl@#896',
+    password: 'root',
     host: 'localhost',
     port: 3306
 };
@@ -44,7 +58,9 @@ const config_mysql = {
 
 // var controllerAdd2 = "xxxxx";
 
-
+var controllerAdd = "0x65E7801bd4b036081dAE9280Ec1b156b39d11Af5";
+var controllerPrivate = "DA93CE2300BBC3455FC0F55C7C8B91B55DC544CCB28757DD3E798F36925C85CB";
+var controllerAdd2 = "0xf2e95d6F75897e6501e185d218504995F300deb4";
 //---------------------------------------------------
 
 var sequelize = new Sequelize(config.database, config.username, config.password, {
