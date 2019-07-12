@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title></title>
+		<meta charset="utf-8">
+			    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+			    <meta name="viewport" content="width=device-width, initial-scale=1">
+				<link href="stylesheets/toastr.min.css" rel="stylesheet">
+				<style>
+				input{
+					border:1px solid black;
+				}
+			</style>
+	</head>
+	<body>
+		<div>
+			<p>
+				<span>create account</span>
+				user_id:<input type="text" id="userid"/>
+				<button onclick="createbtn()">create</button>
+			</p>
+			<p>
+				<span>withdraw</span>
+				address:<input type="text" id="address"/><br/>
+				value:<input type="number" id="wvalue"/>
+				<button onclick="withdrawbtn()">withdraw</button>
+		</div>
+
+	  <script type="text/javascript" src="/javascripts/jquery.js"></script>
+      <script type="text/javascript" src="/javascripts/axios.min.js"></script>
+	  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.slim.js"></script>
+	  <script type="text/javascript" src="/javascripts/toastr.min.js"></script>
+
+
+	  <script type="text/javascript">
+	  	function createbtn(){
+	  		let user_id = $("#userid").val()
+	  		let url = "/api/create";
+	  		let params ={
+	  			user_id: user_id
+	  		}
+	  		methods(url,params)
+	  	}
+		
+		function withdrawbtn(){
+			let address = $("#address").val()
+			let inputVal=$("#wvalue").val()
+			let url = "/api/withdraw";
+			let params = {
+				inputVal:inputVal,
+				address:address
+			}
+		}
+
+		function  updateNotice(){
+			let url = "/api/update_notice";
+			let params ={
+				"noticeId":8,
+				"noticeType":2,
+				"noticeComment":"ddddddd",
+				"state":0
+			}
+			methods(url,params)
+		}
+
+	  	
+
+	  	
+
+	  	function methods(url,params){
+			axios.post(url,params).then(function(res){
+				console.log(url+":",res.data.resp)
+			})
+		}
+	  	
+	  </script>
+	</body>
+</html>
+
+
+
+
