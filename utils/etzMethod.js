@@ -75,10 +75,8 @@ function onError(config,e_id){
  return doerror
 }
 async function callBlockNumber(config){
-  if(global.web3){
     return await global.web3.eth.getBlockNumber()
-  }
-  getWeb3(config)
+ 
 }
 
 async function callBalance(config,from){
@@ -98,16 +96,6 @@ async function eth_gasPrice(config){
 	return await global.web3.eth.getGasPrice();
 }
 
-async function getWeb3(config){
-  try{
-    let  provider = await new config.Web3(global.rpc)
-    global.web3 = provider
-  }catch(e){
-    console.log(e)
-    getWeb3(config)
-  }
-
-}
 
 
 module.exports ={
