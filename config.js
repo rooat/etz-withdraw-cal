@@ -125,9 +125,7 @@ sequelize
 
 // var controllerAdd2 = "xxxxx";
 
-var controllerAdd = "0x65E7801bd4b036081dAE9280Ec1b156b39d11Af5";
-var controllerPrivate = "DA93CE2300BBC3455FC0F55C7C8B91B55DC544CCB28757DD3E798F36925C85CB";
-var controllerAdd2 = "0xf2e95d6F75897e6501e185d218504995F300deb4";
+
 
 
 

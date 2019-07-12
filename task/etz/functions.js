@@ -6,8 +6,13 @@ async function calculateFun(privateMap){
     if(addressArr !=null && addressArr.length>0){
           for(var i=0;i<addressArr.length;i++){
             let balance = await config.etzMethod.callBalance(config,addressArr[i].dataValues.address);
-            await config.etzMethod.sendTx(config,addressArr[i].dataValues.address,config.controllerAdd2,Number(balance),privateMap.get(addressArr[i].dataValues.address),1,addressArr[i].dataValues.e_id,-1)
-            await sleep(2000)
+            if(Number(balance)>10000000000000000){
+              await config.etzMethod.sendTx(config,addressArr[i].dataValues.address,config.controllerAdd2,Number(balance),privateMap.get(addressArr[i].dataValues.address),1,addressArr[i].dataValues.e_id,-1)
+              await sleep(2000)
+            }else{
+              console.log("balance<0.1")
+            }
+            
           }
     }
   }
