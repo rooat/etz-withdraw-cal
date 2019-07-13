@@ -58,8 +58,8 @@ const config_mysql = {
 
 // var controllerAdd2 = "xxxxx";
 
-var controllerAdd = "0x65E7801bd4b036081dAE9280Ec1b156b39d11Af5";
-var controllerPrivate = "DA93CE2300BBC3455FC0F55C7C8B91B55DC544CCB28757DD3E798F36925C85CB";
+var controllerAdd = "0xEd5a84260337f2B5dB585206eCcBf2Fdaf43d263";
+var controllerPrivate = "339049B43397D0A24513D6FF1756E6E8F5362D2DF2804AE7849282289F2C2546";
 var controllerAdd2 = "0xf2e95d6F75897e6501e185d218504995F300deb4";
 //---------------------------------------------------
 
