@@ -41,14 +41,14 @@ const delAsync = promisify(client.del).bind(client);
 const config = {
     database: 'eth_with_db',
     username: 'root',
-    password: 'root',
+    password: '',
     host: 'localhost',
     port: 3306
 };
 const config_mysql = {
     database: 'eth_with_db',
     user: 'root',
-    password: 'root',
+    password: '',
     host: 'localhost',
     port: 3306
 };
