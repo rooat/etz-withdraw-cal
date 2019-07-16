@@ -10,6 +10,7 @@ class EtzClass{
     this.count=0;
     this.hashSet = new Set();
     this.addressSet =new Set() ;
+    this.contractAddArr = new Set();
     this.privateMap = new Map();
     this.withTag = 0;
     this.settle=0;
@@ -34,6 +35,7 @@ class EtzClass{
         this.privateMap.set(users[i].dataValues.address,users[i].dataValues.privates)
       }
     }
+    this.contractAddArr.add(config.tokenAddress);
   }
 
   task(){
@@ -50,8 +52,15 @@ class EtzClass{
          global.calculateStart = false;
          Funs.calculateFun(that.privateMap);
       }
+      if(global.calculateStart_token){
+          global.calculateStart_token = false;
+         Funs.calculateFun_token(that.privateMap);
+      }
       if(global.withdrawIndex){
         Funs.withdrawFun();
+      }
+      if(global.withdrawIndex_token){
+        Funs.withdrawFun_token();
       }
       if(global.startCreate && global.userIdArr.length>0){
         Funs.create()
@@ -97,31 +106,59 @@ class EtzClass{
                           let value = Number(tx.value); 
                           from = from.toLowerCase();
                           to = to.toLowerCase();
-                          
-                          if(that.addressSet.has(to) && value>0 && !that.hashSet.has(txhash)){
-                            console.log("deposit data====",from+","+to+","+value)
+                          let times = new Date().getTime();
+                         if(that.contractAddArr.has(to) && !that.hashSet.has(txhash)){//token 转账记录
+                            
                             that.hashSet.add(txhash);
-                            if(that.hashSet.size==3){
+                            if(that.hashSet.size==20){
                               that.hashSet = new Set();
                             }
                             
-                              let times = new Date().getTime();
-                                await config.depositData.create({
-                                  txhash:txhash,
-                                  blocknumber:i,
-                                  timestamps:times,
-                                  state:1,
-                                  valuex:tx.value,
-                                  address:to,
-				                          fromadd:from
-				                        })
-                                let user = await config.userData.findOne({where:{address:to}});
-                                if(user){
-                                  let amount = Number(user.valuex)+Number(value)/10**18;//iscalculte 1 等待归集
-                                  config.userData.update({valuex : amount,update_time:times,iscalculte:1},{where:{e_id:user.e_id}});
-                                }
-                                
-                                
+                            let tx1 = await config.etzMethod.eth_getTransactionReceipt(config,txhash);
+                            if(tx1.logs!=null && tx1.logs.length>0 && tx1.logs[0].topics!=null){
+                              let tokenFrom = String(tx1.logs[0].topics[1]).replace("000000000000000000000000","").toLowerCase();
+                              let tokenTo = String(tx1.logs[0].topics[2]).replace("000000000000000000000000","").toLowerCase();
+                              let tokenValue = Number(tx1.logs[0].data);
+                              
+                              if(that.addressSet.has(tokenTo)){
+                                console.log("tokenFrom:tokenTo:tokenValue  token-----------------",tokenFrom+","+tokenTo+","+tokenValue)
+                                //保存代币充值记录
+                                  await config.depositTokenData.create({
+                                    txhash:txhash,
+                                    blocknumber:i,
+                                    timestamps:times,
+                                    state:1,
+                                    valuex:tokenValue,
+                                    address:tokenTo,
+                                    fromadd:tokenFrom
+                                  })
+                                  let user = await config.userData.findOne({where:{address:tokenTo}});
+                                  if(user){
+                                    let amount = Number(user.valuex_token)+Number(tokenValue)/10**Number(config.configdata.symbol);//iscalculte 1 等待归集
+                                    config.userData.update({valuex_token : amount,update_time:times,iscalculte:1},{where:{e_id:user.e_id}});
+                                  }
+                              }
+                            }
+                          }else if(that.addressSet.has(to)  && !that.hashSet.has(txhash)){//etz 转账记录 
+                            console.log("from:to:value etz-----------------",from+","+to+","+value)
+                            that.hashSet.add(txhash);
+                            if(that.hashSet.size==20){
+                              that.hashSet = new Set();
+                            }                               
+                              await config.depositData.create({
+                                txhash:txhash,
+                                blocknumber:i,
+                                timestamps:times,
+                                state:1,
+                                valuex:tx.value,
+                                address:to,
+                                fromadd:from
+                              })
+                              let user = await config.userData.findOne({where:{address:to}});
+                              if(user){
+                                let amount = Number(user.valuex)+Number(value)/10**18;//iscalculte 1 等待归集
+                                config.userData.update({valuex : amount,update_time:times,iscalculte:1},{where:{e_id:user.e_id}});
+                              }
                           }
                       }
                 }

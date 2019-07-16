@@ -1,28 +1,21 @@
 const Tx = require('ethereumjs-tx');
 const axios = require("axios");
 
- async function sendTx(config,from,to,value,private,index,id,ids){
+async function sendTx_token(config,from,to,value,private,index,id,ids){
   
- 	try {
+  try {
       let nonce = await global.web3.eth.getTransactionCount(from)
       
       let gasss = await eth_gasPrice(config)
-      value = Number(value)/10**18-Number(gasss)*50000/10**18;
-      
-      value = String(value*10**6)
-      let indexOfs = value.indexOf(".")
-      if(indexOfs!=-1){
-        value = value.substr(0,indexOfs);
-      }
-      value = value+"000000000000"
+      let datas = await config.instanceToken.methods.transfer(to,value).encodeABI();
       var txObject = await global.web3.eth.accounts.signTransaction({
-          from : from,
-          to: to,
-          data: '',
+          from:from,
+          to: config.tokenAddress,
+          data: datas,
           gasPrice: gasss,
-          gasLimit: '0x7530',
+          gasLimit: '0x9770',
           nonce: nonce++,
-          value: value
+          value:0
       }, "0x"+private)
       global.web3.eth.sendSignedTransaction(txObject.rawTransaction)
       .once('transactionHash', onSended(config,value,index,id,ids))
@@ -43,9 +36,9 @@ function onSuccess(config,value,index,e_id,ids){
    }else if(index==2){
    		let user = await config.userData.findOne({where:{e_id:ids}});
       if(user){
-        let amount = Number(user.valuex)-Number(value)/10**18;
+        let amount = Number(user.valuex_token)-Number(value)/10**Number(config.configdata.symbol);
         await config.withdrawData.update({txhash:hash,state:2},{where:{e_id:e_id}});
-        await config.userData.update({valuex:amount},{where:{e_id:ids}});
+        await config.userData.update({valuex_token:amount},{where:{e_id:ids}});
       }
    		
    }
@@ -101,5 +94,5 @@ async function eth_gasPrice(config){
 
 
 module.exports ={
-	sendTx,callBalance,callBlockNumber,eth_getBlockByNumber,eth_getTransactionByHash,eth_getTransactionReceipt
+	sendTx_token,callBalance,callBlockNumber,eth_getBlockByNumber,eth_getTransactionByHash,eth_getTransactionReceipt
 }

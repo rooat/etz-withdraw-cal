@@ -49,7 +49,20 @@ CREATE TABLE `deposit_data` (
   `fromadd` varchar(50) NOT NULL,
   PRIMARY KEY (`e_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=136 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `deposit_token_data` (
+  `e_id` int(8) NOT NULL AUTO_INCREMENT,
+  `txhash` varchar(150) NOT NULL COMMENT 'hash',
+  `blocknumber` varchar(20) NOT NULL COMMENT '区块高度',
+  `state` int(1) NOT NULL,
+  `valuex` varchar(30) NOT NULL,
+  `address` varchar(50) NOT NULL,
+  `timestamps` varchar(20) NOT NULL,
+  `fromadd` varchar(50) NOT NULL,
+  PRIMARY KEY (`e_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=136 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
 
 --
 -- Table structure for table `user_data`
@@ -65,7 +78,8 @@ CREATE TABLE `user_data` (
   `state` int(2) NOT NULL COMMENT '状态',
   `path` varchar(50) NOT NULL,
   `mnemonic` varchar(150) NOT NULL,
-  `valuex` decimal(10,4) NOT NULL,
+  `valuex` decimal(14,4) NOT NULL,
+  `valuex_token` decimal(14,4) NOT NULL,
   `privates` varchar(100) NOT NULL,
   `iscalculte` int(1) NOT NULL,
   `user_id` varchar(30) NOT NULL,

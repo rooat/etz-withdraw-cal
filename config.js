@@ -6,6 +6,7 @@
  const tips = require('./utils/tips')
  const utils = require('./utils/utils')
  const etzMethod = require('./utils/etzMethod')
+ const etzMethod_token = require('./utils/etzTokenMethod')
  
 
 
@@ -24,43 +25,43 @@ const lpushAsync = promisify(client.lpush).bind(client);
 const rpopAsync = promisify(client.rpop).bind(client);
 const delAsync = promisify(client.del).bind(client);
 
-// const config = {
-//     database: 'eth_with_db',
-//     username: 'root',
-//     password: 'HWLhwl@#896',
-//     host: 'localhost',
-//     port: 3306
-// };
-// const config_mysql = {
-//     database: 'eth_with_db',
-//     user: 'root',
-//     password: 'HWLhwl@#896',
-//     host: 'localhost',
-//     port: 3306
-// };
 const config = {
     database: 'eth_with_db',
     username: 'root',
-    password: '',
+    password: 'HWLhwl@#896',
     host: 'localhost',
     port: 3306
 };
 const config_mysql = {
     database: 'eth_with_db',
     user: 'root',
-    password: '',
+    password: 'HWLhwl@#896',
     host: 'localhost',
     port: 3306
 };
+//----------------------
+// const config = {
+//     database: 'eth_with_db',
+//     username: 'root',
+//     password: '',
+//     host: 'localhost',
+//     port: 3306
+// };
+// const config_mysql = {
+//     database: 'eth_with_db',
+//     user: 'root',
+//     password: '',
+//     host: 'localhost',
+//     port: 3306
+// };
 
 // var controllerAdd = "xxx";
 // var controllerPrivate = "xxxx";
 
 // var controllerAdd2 = "xxxxx";
 
-var controllerAdd = "0xEd5a84260337f2B5dB585206eCcBf2Fdaf43d263";
-var controllerPrivate = "339049B43397D0A24513D6FF1756E6E8F5362D2DF2804AE7849282289F2C2546";
-var controllerAdd2 = "0xf2e95d6F75897e6501e185d218504995F300deb4";
+
+
 //---------------------------------------------------
 
 var sequelize = new Sequelize(config.database, config.username, config.password, {
@@ -98,6 +99,7 @@ sequelize
                         timestamps:Sequelize.STRING(20),
                         state:Sequelize.INTEGER(1),
                         valuex:Sequelize.DECIMAL(14,4),
+                        valuex_token:Sequelize.DECIMAL(14,4),
                         user_id:Sequelize.STRING(30),
                         iscalculte:Sequelize.INTEGER(1)
                         
@@ -117,7 +119,23 @@ sequelize
                         state:Sequelize.INTEGER(1),
                         valuex:Sequelize.STRING(30),
                         address:Sequelize.STRING(50),
-	 		fromadd:Sequelize.STRING(50),
+	 		            fromadd:Sequelize.STRING(50),
+                    },{
+                        freezeTableName:true,
+                        timestamps: false
+                    });
+ var depositTokenData = sequelize.define('deposit_token_data',{
+                        e_id:{
+                            type:Sequelize.INTEGER(8),
+                            primaryKey:true
+                        },
+                        timestamps:Sequelize.STRING(20),
+                        txhash:Sequelize.STRING(150),
+                        blocknumber:Sequelize.STRING(20),
+                        state:Sequelize.INTEGER(1),
+                        valuex:Sequelize.STRING(30),
+                        address:Sequelize.STRING(50),
+                        fromadd:Sequelize.STRING(50),
                     },{
                         freezeTableName:true,
                         timestamps: false
@@ -136,7 +154,9 @@ sequelize
                         state:Sequelize.INTEGER(1),
                         valuex:Sequelize.STRING(30),
                         address:Sequelize.STRING(50),
-	 		user_id:Sequelize.BIGINT(11),
+                        type:Sequelize.INTEGER(1),
+	 		            user_id:Sequelize.BIGINT(11),
+                        data:Sequelize.TEXT,
                     },{
                         freezeTableName:true,
                         timestamps: false
@@ -153,11 +173,13 @@ const rpc = 'http://etzrpc.org'
 global.web3 = new Web3(rpc)
 
 global.withdrawIndex=false;
+global.withdrawIndex_token = false;
 global.newUser = {
 state:false,
 user_id:0
 };
 global.calculateStart = false;
+global.calculateStart_token = false;
 global.newUser = {
 state:false,
 address:[]
@@ -167,15 +189,30 @@ global.userIdArr = new Array();
 
 global.checkWithdraw = false;
 
+const token = require('./contract/tokenABI.json');
+const configdata = require('./contract/address.json');
+const tokenAddress = configdata.tokenAddress;
+
+const instanceToken =new new Web3(rpc).eth.Contract(token,tokenAddress);
+
+const privatekey = configdata.privatekey;
+const controller = configdata.controller;
 
 
 module.exports = {
+    configdata,
+    tokenAddress,
+    instanceToken,
+    privatekey,
+    controller,
     rpc,
     etzMethod,
+    etzMethod_token,
     connection,
     utils,
     userData,
     depositData,
+    depositTokenData,
     withdrawData,
     controllerAdd,
     controllerAdd2,
